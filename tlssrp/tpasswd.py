@@ -11,11 +11,7 @@ class TPasswdFile(object):
         """
         Returns the last entry in the tpasswd file for `username`.
         """
-        if not username:
-            raise KeyError("username must be non-empty")
-        if ':' in username:
-            raise KeyError("username must not contain colon (':') delimiter")
-        info = None
+        self.__check_username(username)
         with open(self.path) as f:
             for line in f:
                 if line.startswith(username + ':'):
@@ -23,9 +19,17 @@ class TPasswdFile(object):
         return info
 
     def put(self, username, verifier, salt, group_index):
+        self.__check_username(username)
         with open(self.path, 'a') as f:
             f.write(':'.join((username, verifier, salt, str(group_index))))
             f.write("\n")
+
+    def __check_username(self, username):
+        if not username:
+            raise KeyError("username must be non-empty")
+        if ':' in username:
+            raise KeyError("username must not contain colon (':') delimiter")
+            
     
     def __parse_line(self, line):
         parts = line.split(':')
