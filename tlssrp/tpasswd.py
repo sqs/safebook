@@ -9,17 +9,34 @@ class TPasswdFile(object):
 
     def get(self, username):
         """
-        Returns the last entry in the tpasswd file for `username`.
+        Returns the entry in the tpasswd file for `username`.
         """
         self.__check_username(username)
         with open(self.path) as f:
             for line in f:
                 if line.startswith(username + ':'):
-                    info = self.__parse_line(line)
-        return info
+                    return self.__parse_line(line)
+        return None
 
+    def delete(self, username):
+        """
+        Deletes a user's entry from the file.
+        TODO(sqs): this requires copying and rewriting the whole file. very
+        inefficient and dangerous (if concurrent accesses).
+        """
+        self.__check_username(username)
+        lines = []
+        with open(self.path, 'r+b') as f:
+            for line in f:
+                if not line.startswith(username + ':'):
+                    lines.append(line)
+            f.truncate(0)
+            f.seek(0)
+            f.write(''.join(lines))
+    
     def put(self, username, verifier, salt, group_index):
         self.__check_username(username)
+        self.delete(username)
         with open(self.path, 'a') as f:
             f.write(':'.join((username, verifier, salt, str(group_index))))
             f.write("\n")
@@ -30,7 +47,6 @@ class TPasswdFile(object):
         if ':' in username:
             raise KeyError("username must not contain colon (':') delimiter")
             
-    
     def __parse_line(self, line):
         parts = line.split(':')
         return {

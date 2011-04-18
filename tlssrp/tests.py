@@ -53,3 +53,12 @@ class TestTPasswdFile(unittest.TestCase):
     def test_put_doesnt_clobber_others(self):
         self.passwd.put('newuser', 'abcdefg12345', 'xyz', 2)
         self.assertEquals(3, self.passwd.get('carol')['group_index'])
+
+    def test_delete(self):
+        self.passwd.delete('jsmith')
+        self.assertEquals(None, self.passwd.get('jsmith'))
+
+    def test_delete_doesnt_clobber_others(self):
+        self.passwd.delete('jsmith')
+        self.assertEquals(3, self.passwd.get('carol')['group_index'])
+        
