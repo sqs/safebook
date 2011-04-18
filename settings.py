@@ -69,7 +69,17 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'safebook.tlssrp.auth.SRPMiddleware',
 )
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'safebook.tlssrp.auth.SRPBackend',
+)
+
+SRP_PASSWD_FILE = '/var/www/safebook.trustedhttp.org/db/tpasswd'
+SRP_PASSWD_CONF_FILE = '/var/www/safebook.trustedhttp.org/db/tpasswd.conf'
+#AUTH_PROFILE_MODULE = 'tlssrp.models.SRPUserInfo'
 
 FIXTURE_DIRS = ('fixtures/',)
 
@@ -88,4 +98,5 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     'safebook.profiles',
+    'safebook.tlssrp',
 )
