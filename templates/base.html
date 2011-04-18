@@ -5,5 +5,17 @@
 </head>
 <body>
   {% block content %}{% endblock %}
+
+  <hr>
+
+  <p>
+    <a href="/">Safebook</a>
+    &nbsp; &mdash; &nbsp;
+    {% if user.is_authenticated %}
+        you are {{ user.username }}
+    {% else %}
+        not logged in
+    {% endif %}
+  </p>
 </body>
 </html>
