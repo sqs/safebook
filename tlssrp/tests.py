@@ -1,5 +1,9 @@
-import unittest, tempfile
+import unittest, tempfile, re
 
+from django.test import TestCase
+from django.contrib.auth.models import User
+
+from safebook.tlssrp.models import SRPUserInfo
 from .tpasswd import TPasswdFile
 
 SAMPLE_TPASSWD_FILE = "jsmith:7wvgHboUKq0nM1J7wvksijT3/ZKrwg5o5BjMJQgxfXiyQZiimM94yj4DlzQe3upRV68x14i5LA.WjoCXv6TrERVT05f4Keib3BBqjK88.OBTaYheChx71.iq2ckl6PdKO7/.RPoPMtXytOzm5tLQEFQRj4WGnHghYIQ5SwPdPc6:1aZTSV/drqhDRiv8Fd/dI4:1\n\
@@ -62,3 +66,18 @@ class TestTPasswdFile(unittest.TestCase):
         self.passwd.delete('jsmith')
         self.assertEquals(3, self.passwd.get('carol')['group_index'])
         
+
+class TestSRPUserInfo(TestCase):
+    fixtures = ['test.json']
+
+    def test_makes_verifier(self):
+        srpinfo = SRPUserInfo(user=User.objects.get(username='jsmith'))
+        srpinfo.group_index = 1
+        srpinfo.set_verifier_from_password("asdf")
+        self.assertTrue(srpinfo.salt)
+        self.assertTrue(srpinfo.verifier)
+        # print 'Salt:     <%s>' % srpinfo.salt
+        # print 'Verifier: <%s>' % srpinfo.verifier
+        self.assertTrue(re.match(r'^[a-zA-Z0-9/.]+$', srpinfo.salt))
+        self.assertTrue(re.match(r'^[a-zA-Z0-9/.]+$', srpinfo.verifier))
+
