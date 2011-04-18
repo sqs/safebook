@@ -4,8 +4,12 @@
 <h1>Safebook</h1>
 
 <ul>
-{% for user in users %}
-  <li><a href="{% url profiles.views.detail user.username %}">{{ user.username }}</a></li>
+{% for thisuser in allusers %}
+  <li>
+    <a href="{% url profiles.views.detail thisuser.username %}">
+      {{ thisuser.username }}
+    </a>
+  </li>
 {% endfor %}
 </ul>
 {% endblock %}
