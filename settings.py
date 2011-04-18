@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'data/db.sqlite3',
+        'NAME': '/var/www/safebook.trustedhttp.org/data/db.sqlite3',
     }
 }
 
@@ -76,7 +76,7 @@ FIXTURE_DIRS = ('fixtures/',)
 ROOT_URLCONF = 'safebook.urls'
 
 TEMPLATE_DIRS = (
-    "templates"
+    "/var/www/safebook.trustedhttp.org/templates"
 )
 
 INSTALLED_APPS = (
