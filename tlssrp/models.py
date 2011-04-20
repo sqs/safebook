@@ -8,7 +8,7 @@ from django.dispatch import receiver
 
 from .tpasswd import TPasswdFile
 
-def srpToBase64(s):
+def srpb64encode(s):
     import ctypes as c
     libgnutls = c.CDLL("libgnutls.so")
     class gnutls_datum_t(c.Structure):
@@ -48,17 +48,18 @@ class SRPUserInfo(models.Model):
         N, g, s, v = mathtls.makeVerifier(self.user.username,
                                           password,
                                           self.get_group_size())
-        self.salt = srpToBase64(s)
-        self.verifier = srpToBase64(mathtls.numberToString(v))
+        self.salt = srpb64encode(s)
+        self.verifier = srpb64encode(mathtls.numberToString(v))
 
 
 @receiver(pre_save, sender=SRPUserInfo)
 def set_verifier_from_password(sender, **kwargs):
     srpinfo = kwargs['instance']
-    srpinfo.set_verifier_from_password(srpinfo.password)
-    srpinfo.password = None
+    if srpinfo.password:
+        srpinfo.set_verifier_from_password(srpinfo.password)
+        srpinfo.password = None
         
-@receiver(post_save, sender=SRPUserInfo)
+@receiver(pre_save, sender=SRPUserInfo)
 def add_to_srp_passwd_file(sender, **kwargs):
      srpinfo = kwargs['instance']
      user = srpinfo.user

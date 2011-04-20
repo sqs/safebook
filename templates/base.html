@@ -11,10 +11,12 @@
   <p>
     <a href="/">Safebook</a>
     &nbsp; &mdash; &nbsp;
-    {% if user.is_authenticated %}
-        you are {{ user.username }}
+    {% if 1 %}
+        you are john{{ user.username }} -
+        <a href="http://safebook.trustedhttp.org/">log out</a>
     {% else %}
-        not logged in
+        not logged in: <a href="https://safebook.trustedhttp.org/">log in</a> or
+                       <a href="{% url tlssrp.views.register %}">register</a>
     {% endif %}
   </p>
 </body>
