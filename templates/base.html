@@ -11,8 +11,8 @@
   <p>
     <a href="/">Safebook</a>
     &nbsp; &mdash; &nbsp;
-    {% if 1 %}
-        you are john{{ user.username }} -
+    {% if user.is_authenticated %}
+        you are {{ user.username }} -
         <a href="http://safebook.trustedhttp.org/">log out</a>
     {% else %}
         not logged in: <a href="https://safebook.trustedhttp.org/">log in</a> or
