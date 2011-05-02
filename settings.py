@@ -77,9 +77,7 @@ AUTHENTICATION_BACKENDS = (
     'safebook.tlssrp.auth.SRPBackend',
 )
 
-SRP_PASSWD_FILE = '/var/www/safebook.trustedhttp.org/db/tpasswd'
-SRP_PASSWD_CONF_FILE = '/var/www/safebook.trustedhttp.org/db/tpasswd.conf'
-#AUTH_PROFILE_MODULE = 'tlssrp.models.SRPUserInfo'
+SESSION_COOKIE_SECURE = True
 
 FIXTURE_DIRS = ('fixtures/',)
 

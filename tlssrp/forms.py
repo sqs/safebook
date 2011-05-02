@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, UNUSABLE_PASSWORD
 from django import forms
 
-from safebook.tlssrp.models import SRPUserInfo, srpb64encode
+from safebook.tlssrp.models import SRPUserInfo
 
 class SRPVerifierInput(forms.TextInput):
     input_type = 'srp-verifier'
@@ -20,8 +20,8 @@ class SRPUserCreationForm(forms.ModelForm):
         error_messages = {'invalid': "This value may contain only [a-zA-Z0-9]."})
     verifier = forms.CharField(label="SRP verifier", widget=SRPVerifierInput)
     salt     = forms.CharField(label="SRP salt", widget=SRPSaltInput)
-    group_index = forms.ChoiceField(label="SRP group size (bits)",
-                                   choices=((1,'1024'), (2,'1536'), (3,'2048')))
+    srp_group    = forms.ChoiceField(label="SRP group",
+                                   choices=((1024,'1024'), (1536,'1536'), (2048,'2048')))
 
     class Meta:
         model = User
@@ -34,20 +34,14 @@ class SRPUserCreationForm(forms.ModelForm):
         except User.DoesNotExist:
             return username
         raise forms.ValidationError("A user with that username already exists.")
-
-    def clean_salt(self):
-        return srpb64encode(base64.b64decode(self.cleaned_data['salt']))
-
-    def clean_verifier(self):
-        return srpb64encode(base64.b64decode(self.cleaned_data['verifier']))
     
     def save(self, commit=True):
         user = super(SRPUserCreationForm, self).save(commit=False)
         user.password = UNUSABLE_PASSWORD
         srpinfo = SRPUserInfo()
-        srpinfo.verifier = self.cleaned_data['verifier']
-        srpinfo.salt     = self.cleaned_data['salt']
-        srpinfo.group_index = self.cleaned_data['group_index']
+        srpinfo.verifier  = self.cleaned_data['verifier']
+        srpinfo.salt      = self.cleaned_data['salt']
+        srpinfo.srp_group = self.cleaned_data['srp_group']
         if commit:
             user.save()
             srpinfo.user = user
