@@ -9,8 +9,8 @@ class IndexTest(TestCase):
         self.assertContains(res, 'jsmith')
 
     def test_get_auth(self):
-        res = self.client.get('/', SSL_SRP_USER='user')
-        self.assertContains(res, '<h1>Safebook - user</h1>')
+        res = self.client.get('/', SSL_SRP_USER='jsmith')
+        self.assertContains(res, '<h1>Safebook - jsmith</h1>')
 
 class DetailTest(TestCase):
     fixtures = ['test.json']
@@ -27,8 +27,8 @@ class BaseTemplateTest(TestCase):
     fixtures = ['test.json']
 
     def test_show_logged_in_user(self):
-        res = self.client.get('/', SSL_SRP_USER='user')
-        self.assertContains(res, 'you are user')
+        res = self.client.get('/', SSL_SRP_USER='jsmith')
+        self.assertContains(res, 'you are jsmith')
 
     def test_not_logged_in(self):
         res = self.client.get('/')
