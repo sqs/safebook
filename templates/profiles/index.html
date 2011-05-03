@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Safebook</h1>
+<h1>Safebook{% if user.is_authenticated %} - {{ user.username }}{% endif %}</h1>
 
 <ul>
 {% for thisuser in allusers %}

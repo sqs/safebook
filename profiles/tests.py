@@ -7,7 +7,11 @@ class IndexTest(TestCase):
         res = self.client.get('/')
         self.assertContains(res, '<h1>Safebook</h1>')
         self.assertContains(res, 'jsmith')
-    
+
+    def test_get_auth(self):
+        res = self.client.get('/', SSL_SRP_USER='user')
+        self.assertContains(res, '<h1>Safebook - user</h1>')
+
 class DetailTest(TestCase):
     fixtures = ['test.json']
     
