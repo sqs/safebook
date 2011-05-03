@@ -42,3 +42,13 @@ class TestRegister(TestCase):
         self.assertEquals(self.verifier_b64, srpinfo.verifier)
         self.assertEquals(self.srp_group, srpinfo.srp_group)
         self.assertEquals(None, srpinfo.password)
+
+class TestAdmin(TestCase):
+    fixtures = ['test.json']
+
+    def test_ssl_user_logged_in(self):
+        res = self.client.get('/admin/', SSL_SRP_USER='admin')
+        self.assertEquals('admin', res.context['user'].username)
+        # test has been logged into admin interface:
+        self.assertContains(res, 'Models available in the Auth application.')
+        self.assertNotContains(res, 'name="this_is_the_login_form"')
