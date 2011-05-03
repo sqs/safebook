@@ -15,7 +15,8 @@ class SRPUserInfo(models.Model):
     password = models.CharField(max_length=255, blank=True, null=True,
                                 help_text='Sets SRP verifier and salt')
 
-    def set_verifier_from_password(self, password):
+    def set_from_password(self, password, srp_group=1024):
+        self.srp_group = srp_group
         N, g, s, v = mathtls.makeVerifier(self.user.username,
                                           password,
                                           self.srp_group)
@@ -26,8 +27,8 @@ class SRPUserInfo(models.Model):
 
 
 @receiver(pre_save, sender=SRPUserInfo)
-def set_verifier_from_password(sender, **kwargs):
+def set_from_password(sender, **kwargs):
     srpinfo = kwargs['instance']
     if srpinfo.password:
-        srpinfo.set_verifier_from_password(srpinfo.password)
+        srpinfo.set_from_password(srpinfo.password)
         srpinfo.password = None

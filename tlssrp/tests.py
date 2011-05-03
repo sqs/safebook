@@ -10,8 +10,7 @@ class TestSRPUserInfo(TestCase):
 
     def test_makes_verifier(self):
         srpinfo = SRPUserInfo(user=User.objects.get(username='jsmith'))
-        srpinfo.srp_group = 1024
-        srpinfo.set_verifier_from_password("asdf")
+        srpinfo.set_from_password("asdf")
         self.assertTrue(srpinfo.salt)
         self.assertTrue(srpinfo.verifier)
         # print 'Salt:     <%s>' % srpinfo.salt
