@@ -43,6 +43,35 @@ class TestRegister(TestCase):
         self.assertEquals(self.srp_group, srpinfo.srp_group)
         self.assertEquals(None, srpinfo.password)
 
+class TestEdit(TestCase):
+    fixtures = ['test.json']
+
+    def test_edit_not_logged_in(self):
+        res = self.client.get('/auth/edit/jsmith')
+        self.assertEquals(403, res.status_code)
+
+    def test_edit_different_user(self):
+        res = self.client.get('/auth/edit/jsmith', SSL_SRP_USER='alice')
+        self.assertEquals(403, res.status_code)
+
+    def test_edit_nonexistent_user(self):
+        res = self.client.get('/auth/edit/notauser')
+        self.assertEquals(403, res.status_code)
+
+    def test_edit_self(self):
+        res = self.client.get('/auth/edit/jsmith', SSL_SRP_USER='jsmith')
+        self.assertEquals(200, res.status_code)
+
+    def test_post_edit(self):
+        postdata = {'verifier': 'new_v', 'salt': 'new_s', 'srp_group': 2048}
+        res = self.client.post('/auth/edit/jsmith', postdata, SSL_SRP_USER='jsmith')
+        self.assertEquals(200, res.status_code)
+        user = User.objects.get(username='jsmith')
+        srpinfo = SRPUserInfo.objects.get(user=user)
+        self.assertEquals('new_v', srpinfo.verifier)
+        self.assertEquals('new_s', srpinfo.salt)
+        self.assertEquals(2048, srpinfo.srp_group)
+
 class TestAdmin(TestCase):
     fixtures = ['test.json']
 

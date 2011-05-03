@@ -47,3 +47,13 @@ class SRPUserCreationForm(forms.ModelForm):
             srpinfo.user = user
             srpinfo.save()
         return user
+
+class SRPUserEditForm(forms.ModelForm):
+    verifier     = forms.CharField(label="SRP verifier", widget=SRPVerifierInput)
+    salt         = forms.CharField(label="SRP salt", widget=SRPSaltInput)
+    srp_group    = forms.ChoiceField(label="SRP group",
+                                     choices=((1024,'1024'), (1536,'1536'), (2048,'2048')))
+
+    class Meta:
+        model = SRPUserInfo
+        fields = ('verifier', 'salt', 'srp_group')

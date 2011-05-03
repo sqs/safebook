@@ -13,6 +13,7 @@
     &nbsp; &mdash; &nbsp;
     {% if user.is_authenticated %}
         you are {{ user.username }} -
+        <a href="{% url tlssrp.views.edit username=user.username %}">edit account</a> or
         <a href="http://safebook.trustedhttp.org/">log out</a>
     {% else %}
         not logged in: <a href="https://safebook.trustedhttp.org/">log in</a> or
